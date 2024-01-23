@@ -11,13 +11,27 @@ export default function Share() {
 
   const [file, setFile] = useState(null);
 
-  const handleSublit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newPost = {
       userId: user._id,
       desc: desc.current.value,
     };
+
+    if(file) {
+      const data = new FormData();
+      const fileName = Date.now() + file.name;
+      data.append("name", fileName);
+      data.append("file", file);
+      newPost.img = fileName;
+
+      try {
+        await axios.post("/upload", data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
 
     try {
       await axios.post("/posts", newPost);
@@ -48,7 +62,7 @@ export default function Share() {
           />
         </div>
         <hr className="shareHr" />
-        <form className="shareButtons" onSubmit={(e) => handleSublit(e)}>
+        <form className="shareButtons" onSubmit={(e) => handleSubmit(e)}>
           <div className="shareOptions">
             <label className="shareOption" htmlFor="file">
               <Image className="shareIcon" htmlColor="blue" />
